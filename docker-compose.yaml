@@ -1,0 +1,30 @@
+version: '1.0'
+
+services: 
+    db:
+        image: mysql
+        container_name: mysql-db
+        restart: always
+        env_file: ./ .env
+        environment: 
+            MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+        ports: 
+            - $MYSQL_LOCAL_PORT:$MYSQL_DOCKER_PORT
+        volumes: 
+            - db-config: /etc/mysql
+            - db-data: /var/lib/mysql
+    app:
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+        container_name: node-api
+        volumes: 
+            - .:/usr/app
+        ports: 
+            - 3000:3000
+        depends_on:
+            - db
+        stdin_open: true
+volumes:
+    db-config:
+    db-data:
